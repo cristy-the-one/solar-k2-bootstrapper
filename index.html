@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar System Kardashev 2 Bootstrapper</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/ui-components.css">
+    <link rel="stylesheet" href="styles/animations.css">
+
+    <!-- Three.js from CDN -->
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="sun-loader"></div>
+            <h1>Solar System K2 Bootstrapper</h1>
+            <p class="loading-text">Initializing solar system...</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="load-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Game Container -->
+    <div id="game-container">
+        <!-- Three.js Canvas Container -->
+        <div id="canvas-container"></div>
+
+        <!-- UI Layer - All interactive UI elements go here -->
+        <div id="ui-layer">
+
+        <!-- Top HUD - Resources -->
+        <div id="top-hud">
+            <div id="resource-bar"></div>
+            <div id="era-indicator">
+                <span class="era-label">Era:</span>
+                <span id="current-era">Early Space</span>
+            </div>
+        </div>
+
+        <!-- Left Panel - Build Menu -->
+        <div id="left-panel" class="side-panel">
+            <div class="panel-header">
+                <h2>Build</h2>
+                <button class="panel-toggle" data-panel="left">&#9664;</button>
+            </div>
+            <div id="build-menu" class="panel-content"></div>
+        </div>
+
+        <!-- Right Panel - Tech Tree -->
+        <div id="right-panel" class="side-panel">
+            <div class="panel-header">
+                <button class="panel-toggle" data-panel="right">&#9654;</button>
+                <h2>Research</h2>
+            </div>
+            <div id="tech-tree-panel" class="panel-content"></div>
+        </div>
+
+        <!-- Bottom Panel - Info/Stats -->
+        <div id="bottom-panel">
+            <div id="planet-selector">
+                <label for="planet-select">Go to:</label>
+                <select id="planet-select">
+                    <option value="">-- Select --</option>
+                    <option value="sun">The Sun</option>
+                    <option value="mercury">Mercury</option>
+                    <option value="venus">Venus</option>
+                    <option value="earth">Earth</option>
+                    <option value="mars">Mars</option>
+                    <option value="jupiter">Jupiter</option>
+                    <option value="saturn">Saturn</option>
+                    <option value="uranus">Uranus</option>
+                    <option value="neptune">Neptune</option>
+                </select>
+            </div>
+            <div id="selection-info">
+                <span class="info-label">Select an object to view details</span>
+            </div>
+            <div id="solar-capture">
+                <div class="capture-label">Solar Capture</div>
+                <div class="capture-bar">
+                    <div class="capture-fill" id="capture-progress"></div>
+                    <span class="capture-text" id="capture-percent">0.00%</span>
+                </div>
+            </div>
+            <div id="quick-stats"></div>
+        </div>
+
+        <!-- Construction Queue -->
+        <div id="construction-queue">
+            <h3>Building</h3>
+            <div id="queue-list"></div>
+        </div>
+
+        <!-- Notification Area -->
+        <div id="notifications"></div>
+
+        <!-- Tooltip Container -->
+        <div id="tooltip" class="hidden"></div>
+
+        <!-- Tutorial Overlay -->
+        <div id="tutorial-overlay" class="hidden">
+            <div class="tutorial-box">
+                <div class="tutorial-content" id="tutorial-content"></div>
+                <div class="tutorial-buttons">
+                    <button id="tutorial-skip">Skip Tutorial</button>
+                    <button id="tutorial-next">Next</button>
+                </div>
+                <div class="tutorial-progress" id="tutorial-progress"></div>
+            </div>
+            <div class="tutorial-highlight" id="tutorial-highlight"></div>
+        </div>
+
+        <!-- Victory Screen -->
+        <div id="victory-screen" class="hidden">
+            <div class="victory-content">
+                <h1>KARDASHEV TYPE 2 ACHIEVED!</h1>
+                <div class="victory-sun"></div>
+                <p>You have successfully harnessed the full power of the Sun!</p>
+                <p class="victory-stats" id="victory-stats"></p>
+                <div class="victory-buttons">
+                    <button id="continue-playing">Continue Building</button>
+                    <button id="sandbox-mode">Sandbox Mode</button>
+                    <button id="new-game">New Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Settings</h2>
+                <div class="setting-group">
+                    <label>Graphics Quality</label>
+                    <select id="graphics-quality">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>Music Volume</label>
+                    <input type="range" id="music-volume" min="0" max="100" value="50">
+                </div>
+                <div class="setting-group">
+                    <label>SFX Volume</label>
+                    <input type="range" id="sfx-volume" min="0" max="100" value="70">
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="show-orbits" checked> Show Orbital Paths
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="auto-save" checked> Auto-Save
+                    </label>
+                </div>
+                <div class="setting-group save-transfer">
+                    <label>Save Data Transfer</label>
+                    <p class="setting-hint">Export your save to transfer progress between computers</p>
+                    <div class="save-transfer-buttons">
+                        <button id="export-save" class="btn">Export Save</button>
+                        <button id="import-save" class="btn">Import Save</button>
+                    </div>
+                    <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                </div>
+                <div class="modal-buttons">
+                    <button id="reset-game" class="danger">Reset Game</button>
+                    <button id="close-settings">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Button -->
+        <button id="menu-button" title="Settings">&#9881;</button>
+
+        <!-- Help Button -->
+        <button id="help-button" title="Help">?</button>
+
+        </div><!-- End UI Layer -->
+    </div>
+
+    <!-- Main Game Script -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

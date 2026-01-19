@@ -1,0 +1,490 @@
+/* Solar K2 Bootstrapper - Animations */
+
+/* Keyframes */
+@keyframes pulse-glow {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 60px #ff8800, 0 0 100px #ff6600;
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 80px #ffaa00, 0 0 140px #ff8800;
+    }
+}
+
+@keyframes victory-glow {
+    0%, 100% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.3);
+    }
+}
+
+@keyframes research-pulse {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(204, 136, 255, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(204, 136, 255, 0.6);
+    }
+}
+
+@keyframes highlight-pulse {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+    }
+    50% {
+        opacity: 0.7;
+        box-shadow: 0 0 40px rgba(255, 204, 0, 0.8);
+    }
+}
+
+@keyframes slide-in-right {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out-right {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes slide-in-up {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes achievement-pop {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes energy-flow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes orbit-dash {
+    from {
+        stroke-dashoffset: 0;
+    }
+    to {
+        stroke-dashoffset: -100;
+    }
+}
+
+@keyframes glow-pulse-energy {
+    0%, 100% {
+        box-shadow: 0 0 10px var(--energy-glow);
+    }
+    50% {
+        box-shadow: 0 0 25px var(--energy-glow);
+    }
+}
+
+@keyframes glow-pulse-materials {
+    0%, 100% {
+        box-shadow: 0 0 10px var(--materials-glow);
+    }
+    50% {
+        box-shadow: 0 0 25px var(--materials-glow);
+    }
+}
+
+@keyframes glow-pulse-research {
+    0%, 100% {
+        box-shadow: 0 0 10px var(--research-glow);
+    }
+    50% {
+        box-shadow: 0 0 25px var(--research-glow);
+    }
+}
+
+@keyframes number-pop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes progress-stripes {
+    from {
+        background-position: 40px 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+/* Animation Classes */
+.animate-fade-in {
+    animation: fade-in 0.3s ease forwards;
+}
+
+.animate-fade-out {
+    animation: fade-out 0.3s ease forwards;
+}
+
+.animate-slide-in-up {
+    animation: slide-in-up 0.3s ease forwards;
+}
+
+.animate-slide-in-right {
+    animation: slide-in-right 0.3s ease forwards;
+}
+
+.animate-slide-out-right {
+    animation: slide-out-right 0.3s ease forwards;
+}
+
+.animate-bounce {
+    animation: bounce 0.5s ease;
+}
+
+.animate-shake {
+    animation: shake 0.3s ease;
+}
+
+.animate-pop {
+    animation: achievement-pop 0.4s ease;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Resource gain animation */
+.resource-gain {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-weight: bold;
+    pointer-events: none;
+    animation: resource-gain-float 1s ease-out forwards;
+}
+
+@keyframes resource-gain-float {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+}
+
+.resource-gain.energy {
+    color: var(--energy-color);
+    text-shadow: 0 0 10px var(--energy-glow);
+}
+
+.resource-gain.materials {
+    color: var(--materials-color);
+    text-shadow: 0 0 10px var(--materials-glow);
+}
+
+.resource-gain.research {
+    color: var(--research-color);
+    text-shadow: 0 0 10px var(--research-glow);
+}
+
+/* Progress bar animation */
+.progress-animated {
+    background: linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 40px 40px;
+    animation: progress-stripes 1s linear infinite;
+}
+
+/* Hover transitions */
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.hover-glow {
+    transition: box-shadow 0.2s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px var(--border-glow);
+}
+
+/* Button click effect */
+.click-ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.click-ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+}
+
+.click-ripple:active::after {
+    width: 200%;
+    height: 200%;
+}
+
+/* Loading dots */
+.loading-dots::after {
+    content: '';
+    animation: loading-dots 1.5s infinite;
+}
+
+@keyframes loading-dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+}
+
+/* Energy stream effect */
+.energy-stream {
+    background: linear-gradient(90deg,
+        transparent,
+        var(--energy-color),
+        transparent
+    );
+    background-size: 200% 100%;
+    animation: energy-flow 2s linear infinite;
+}
+
+/* Notification auto-dismiss */
+.notification-dismiss {
+    animation: slide-out-right 0.3s ease forwards;
+}
+
+/* Structure build completion */
+.build-complete {
+    animation: achievement-pop 0.5s ease, glow-pulse-energy 1s ease-in-out 3;
+}
+
+/* Research complete */
+.research-complete {
+    animation: achievement-pop 0.5s ease, glow-pulse-research 1s ease-in-out 3;
+}
+
+/* Dyson satellite spawn */
+.satellite-spawn {
+    animation: fade-in 0.5s ease, bounce 0.5s ease 0.2s;
+}
+
+/* Era transition */
+.era-transition {
+    animation: achievement-pop 0.8s ease;
+}
+
+.era-transition h2 {
+    animation: victory-glow 2s ease-in-out infinite;
+}
+
+/* Counter increment animation */
+.counter-increment {
+    animation: number-pop 0.2s ease;
+}
+
+/* Disabled state transition */
+.transition-disabled {
+    transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.transition-disabled.disabled {
+    opacity: 0.5;
+    filter: grayscale(50%);
+}
+
+/* Tooltip appear */
+.tooltip-appear {
+    animation: slide-in-up 0.15s ease;
+}
+
+/* Panel slide */
+.panel-slide-left {
+    transition: transform 0.3s ease;
+}
+
+.panel-slide-right {
+    transition: transform 0.3s ease;
+}
+
+/* Victory particles (CSS-only version) */
+.victory-particle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particle-fly 2s ease-out forwards;
+}
+
+@keyframes particle-fly {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-200px) scale(0);
+        opacity: 0;
+    }
+}
+
+/* Selection ring pulse */
+.selection-ring {
+    animation: selection-ring-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes selection-ring-pulse {
+    0%, 100% {
+        stroke-opacity: 1;
+        stroke-width: 2;
+    }
+    50% {
+        stroke-opacity: 0.5;
+        stroke-width: 4;
+    }
+}
+
+/* Idle reminder pulse */
+.idle-reminder {
+    animation: bounce 1s ease infinite;
+}
+
+/* Tutorial arrow bounce */
+.tutorial-arrow {
+    animation: bounce 0.8s ease infinite;
+}
+
+/* Construction sparks */
+.construction-sparks {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--energy-color);
+    border-radius: 50%;
+    animation: spark-fly 0.5s ease-out forwards;
+}
+
+@keyframes spark-fly {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--spark-x, 20px), var(--spark-y, -20px)) scale(0);
+        opacity: 0;
+    }
+}

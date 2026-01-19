@@ -1,0 +1,292 @@
+// Solar System Planetary Data
+
+export const PLANETS = [
+    {
+        id: 'mercury',
+        name: 'Mercury',
+        description: 'Closest to the Sun, rich in metals and ideal for solar collectors.',
+        radius: 1.5,
+        orbitRadius: 40,
+        orbitSpeed: 0.04,
+        rotationSpeed: 0.01,
+        color: 0xb5b5b5,
+        texture: null, // Can add texture paths later
+        tilt: 0.03,
+        features: ['high_solar_flux', 'metal_rich'],
+        unlockEra: 1,
+        bonuses: {
+            solarEfficiency: 1.5,
+            miningYield: 1.2,
+        },
+    },
+    {
+        id: 'venus',
+        name: 'Venus',
+        description: 'Thick atmosphere, good for aerostat habitats and cloud mining.',
+        radius: 2.5,
+        orbitRadius: 60,
+        orbitSpeed: 0.03,
+        rotationSpeed: -0.005, // Retrograde
+        color: 0xe6c87a,
+        texture: null,
+        tilt: 177.4 * Math.PI / 180, // Nearly upside down
+        features: ['thick_atmosphere', 'cloud_cities'],
+        unlockEra: 2,
+        bonuses: {
+            habitatCapacity: 1.3,
+            atmosphericMining: 1.5,
+        },
+    },
+    {
+        id: 'earth',
+        name: 'Earth',
+        description: 'Our home world. Primary source of initial resources and population.',
+        radius: 2.6,
+        orbitRadius: 80,
+        orbitSpeed: 0.025,
+        rotationSpeed: 0.02,
+        color: 0x4488ff,
+        texture: null,
+        tilt: 23.4 * Math.PI / 180,
+        features: ['home_world', 'high_population', 'research_hub'],
+        unlockEra: 1,
+        bonuses: {
+            researchSpeed: 1.5,
+            launchCost: 0.8,
+        },
+        moons: [
+            {
+                id: 'moon',
+                name: 'Moon',
+                radius: 0.7,
+                orbitRadius: 5,
+                orbitSpeed: 0.1,
+                color: 0xcccccc,
+                features: ['helium3', 'launch_base'],
+            },
+        ],
+    },
+    {
+        id: 'mars',
+        name: 'Mars',
+        description: 'The red planet. Great for colonization and material extraction.',
+        radius: 2.0,
+        orbitRadius: 105,
+        orbitSpeed: 0.02,
+        rotationSpeed: 0.019,
+        color: 0xcc6644,
+        texture: null,
+        tilt: 25.2 * Math.PI / 180,
+        features: ['colonizable', 'iron_rich', 'water_ice'],
+        unlockEra: 1,
+        bonuses: {
+            colonyGrowth: 1.4,
+            ironMining: 1.8,
+        },
+        moons: [
+            {
+                id: 'phobos',
+                name: 'Phobos',
+                radius: 0.2,
+                orbitRadius: 3,
+                orbitSpeed: 0.2,
+                color: 0x887766,
+            },
+            {
+                id: 'deimos',
+                name: 'Deimos',
+                radius: 0.15,
+                orbitRadius: 4.5,
+                orbitSpeed: 0.15,
+                color: 0x998877,
+            },
+        ],
+    },
+    {
+        id: 'jupiter',
+        name: 'Jupiter',
+        description: 'Gas giant with massive moons. Source of helium-3 and radiation shielding.',
+        radius: 8,
+        orbitRadius: 160,
+        orbitSpeed: 0.008,
+        rotationSpeed: 0.04,
+        color: 0xd4a574,
+        texture: null,
+        tilt: 3.1 * Math.PI / 180,
+        features: ['gas_giant', 'helium3_rich', 'radiation_belt'],
+        unlockEra: 2,
+        bonuses: {
+            helium3Mining: 2.0,
+            fuelProduction: 1.5,
+        },
+        bands: [
+            { color: 0xc9a86c, width: 0.15 },
+            { color: 0xe8d4b8, width: 0.1 },
+            { color: 0xb8956e, width: 0.2 },
+            { color: 0xdec8a8, width: 0.12 },
+        ],
+        moons: [
+            {
+                id: 'io',
+                name: 'Io',
+                radius: 0.9,
+                orbitRadius: 12,
+                orbitSpeed: 0.08,
+                color: 0xffee44,
+                features: ['volcanic', 'sulfur_rich'],
+            },
+            {
+                id: 'europa',
+                name: 'Europa',
+                radius: 0.8,
+                orbitRadius: 15,
+                orbitSpeed: 0.06,
+                color: 0xeeeeff,
+                features: ['subsurface_ocean', 'ice_mining'],
+            },
+            {
+                id: 'ganymede',
+                name: 'Ganymede',
+                radius: 1.3,
+                orbitRadius: 19,
+                orbitSpeed: 0.04,
+                color: 0xaabbcc,
+                features: ['largest_moon', 'colonizable'],
+            },
+            {
+                id: 'callisto',
+                name: 'Callisto',
+                radius: 1.2,
+                orbitRadius: 24,
+                orbitSpeed: 0.03,
+                color: 0x667788,
+                features: ['low_radiation', 'base_location'],
+            },
+        ],
+    },
+    {
+        id: 'saturn',
+        name: 'Saturn',
+        description: 'Ringed giant with abundant moons. Titan offers unique resources.',
+        radius: 7,
+        orbitRadius: 220,
+        orbitSpeed: 0.005,
+        rotationSpeed: 0.038,
+        color: 0xead6b8,
+        texture: null,
+        tilt: 26.7 * Math.PI / 180,
+        features: ['ringed', 'gas_giant', 'moon_system'],
+        unlockEra: 3,
+        bonuses: {
+            helium3Mining: 1.8,
+            moonColonies: 1.5,
+        },
+        rings: {
+            innerRadius: 9,
+            outerRadius: 16,
+            color: 0xd4c4a8,
+            opacity: 0.7,
+        },
+        moons: [
+            {
+                id: 'titan',
+                name: 'Titan',
+                radius: 1.3,
+                orbitRadius: 22,
+                orbitSpeed: 0.025,
+                color: 0xffaa66,
+                features: ['thick_atmosphere', 'hydrocarbon_lakes', 'colonizable'],
+            },
+            {
+                id: 'enceladus',
+                name: 'Enceladus',
+                radius: 0.4,
+                orbitRadius: 14,
+                orbitSpeed: 0.05,
+                color: 0xffffff,
+                features: ['ice_geysers', 'water_source'],
+            },
+        ],
+    },
+    {
+        id: 'uranus',
+        name: 'Uranus',
+        description: 'Ice giant tilted on its side. Rich in exotic ices.',
+        radius: 4.5,
+        orbitRadius: 300,
+        orbitSpeed: 0.003,
+        rotationSpeed: -0.03, // Retrograde
+        color: 0x88ccdd,
+        texture: null,
+        tilt: 97.8 * Math.PI / 180, // Sideways
+        features: ['ice_giant', 'exotic_materials'],
+        unlockEra: 3,
+        bonuses: {
+            exoticMaterials: 2.0,
+        },
+        rings: {
+            innerRadius: 5.5,
+            outerRadius: 7,
+            color: 0x556677,
+            opacity: 0.3,
+        },
+    },
+    {
+        id: 'neptune',
+        name: 'Neptune',
+        description: 'Distant ice giant with powerful storms and rare isotopes.',
+        radius: 4.3,
+        orbitRadius: 380,
+        orbitSpeed: 0.002,
+        rotationSpeed: 0.028,
+        color: 0x4466ff,
+        texture: null,
+        tilt: 28.3 * Math.PI / 180,
+        features: ['ice_giant', 'rare_isotopes', 'extreme_distance'],
+        unlockEra: 4,
+        bonuses: {
+            rareIsotopes: 2.5,
+        },
+        moons: [
+            {
+                id: 'triton',
+                name: 'Triton',
+                radius: 0.7,
+                orbitRadius: 10,
+                orbitSpeed: -0.04, // Retrograde
+                color: 0xddccbb,
+                features: ['retrograde', 'nitrogen_geysers'],
+            },
+        ],
+    },
+];
+
+// Asteroid belt data
+export const ASTEROID_BELT = {
+    innerRadius: 125,
+    outerRadius: 145,
+    density: 200, // Number of visible asteroids
+    colors: [0x888888, 0x999999, 0x777777, 0xaaaaaa],
+    features: ['mining_rich', 'materials_source'],
+    unlockEra: 1,
+    bonuses: {
+        materialYield: 2.0,
+        rareMetals: 1.5,
+    },
+};
+
+// Kuiper belt data
+export const KUIPER_BELT = {
+    innerRadius: 400,
+    outerRadius: 500,
+    density: 100,
+    colors: [0x666688, 0x555577, 0x777799],
+    features: ['ice_rich', 'comets'],
+    unlockEra: 4,
+    bonuses: {
+        volatiles: 2.0,
+        comets: 1.5,
+    },
+};
+
+export default PLANETS;
