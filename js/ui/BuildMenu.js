@@ -13,6 +13,7 @@ export class BuildMenu {
         this.resourceSystem = null;
         this.container = null;
         this.queueContainer = null;
+        this.needsAffordabilityRefresh = false;
 
         // Current category filter
         this.currentCategory = 'all';
@@ -43,6 +44,9 @@ export class BuildMenu {
         this.stateManager.subscribe('queue:add', () => this.renderQueue());
         this.stateManager.subscribe('queue:remove', () => this.renderQueue());
         this.stateManager.subscribe('construction:progress', () => this.updateQueueProgress());
+        this.stateManager.subscribe('resource:change', () => {
+            this.needsAffordabilityRefresh = true;
+        });
 
         console.log('[BuildMenu] Initialized');
     }
@@ -141,11 +145,14 @@ export class BuildMenu {
                 listEl.appendChild(item);
             }
         }
+
+        this.updateAffordability();
     }
 
     createBuildItem(structure, status) {
         const item = document.createElement('div');
         item.className = 'build-item';
+        item.dataset.structureId = structure.id;
 
         if (!status.unlocked) item.classList.add('locked');
         if (!status.affordable && status.unlocked) item.classList.add('expensive');
@@ -167,7 +174,7 @@ export class BuildMenu {
             <div class="build-item-cost">
                 ${Object.entries(structure.cost).map(([resource, amount]) => {
                 const affordable = (status.resources[resource] || 0) >= amount;
-                return `<span class="cost-item ${affordable ? 'affordable' : 'expensive'}">
+                return `<span class="cost-item ${affordable ? 'affordable' : 'expensive'}" data-resource="${resource}" data-cost="${amount}">
                         ${this.getResourceIcon(resource)} ${formatNumber(amount)}
                     </span>`;
             }).join('')}
@@ -178,11 +185,9 @@ export class BuildMenu {
         `;
 
         // Click handler
-        if (status.unlocked && status.affordable && !atLimit) {
-            item.addEventListener('click', () => {
-                this.build(structure.id);
-            });
-        }
+        item.addEventListener('click', () => {
+            this.build(structure.id);
+        });
 
         return item;
     }
@@ -277,8 +282,45 @@ export class BuildMenu {
     }
 
     update(deltaTime) {
-        // Periodic UI refresh for affordability
-        this.render();
+        if (this.needsAffordabilityRefresh) {
+            this.needsAffordabilityRefresh = false;
+            this.updateAffordability();
+        }
+    }
+
+    updateAffordability() {
+        if (!this.container) return;
+
+        const listEl = this.container.querySelector('#build-list');
+        if (!listEl) return;
+
+        const state = this.stateManager.getState();
+        const completedResearch = state.completedResearch;
+        const structures = state.structures;
+        const resources = state.resources;
+
+        listEl.querySelectorAll('.build-item').forEach((item) => {
+            const structureId = item.dataset.structureId;
+            const structure = STRUCTURES[structureId];
+            if (!structure) return;
+
+            const unlocked = completedResearch.includes(structure.requiresTech);
+            const count = structures[structureId] || 0;
+            const affordable = this.resourceSystem.canAfford(structure.cost);
+            const atLimit = structure.limit !== null && count >= structure.limit;
+
+            item.classList.toggle('locked', !unlocked);
+            item.classList.toggle('expensive', unlocked && !affordable);
+            item.classList.toggle('at-limit', atLimit);
+
+            item.querySelectorAll('.cost-item').forEach((costEl) => {
+                const resource = costEl.dataset.resource;
+                const amount = Number(costEl.dataset.cost || 0);
+                const canAfford = (resources[resource] || 0) >= amount;
+                costEl.classList.toggle('affordable', canAfford);
+                costEl.classList.toggle('expensive', !canAfford);
+            });
+        });
     }
 }
 
