@@ -65,10 +65,11 @@ export class ConstructionSystem {
             return { success: false, reason: 'tech_not_unlocked' };
         }
 
-        // Check build limit
+        // Check build limit (include queued items)
         if (structure.limit !== null) {
             const currentCount = this.stateManager.getStructureCount(structureId);
-            if (currentCount >= structure.limit) {
+            const queuedCount = this.getQueuedCount(structureId);
+            if (currentCount + queuedCount >= structure.limit) {
                 return { success: false, reason: 'limit_reached' };
             }
         }
@@ -204,16 +205,20 @@ export class ConstructionSystem {
 
         const state = this.stateManager.getState();
         const currentCount = state.structures[structureId] || 0;
+        const queuedCount = this.getQueuedCount(structureId);
+        const totalPlanned = currentCount + queuedCount;
         const techUnlocked = state.completedResearch.includes(structure.requiresTech);
         const affordable = this.resourceSystem.canAfford(structure.cost);
 
         return {
             structure,
             currentCount,
+            queuedCount,
+            totalPlanned,
             techUnlocked,
             affordable,
-            atLimit: structure.limit !== null && currentCount >= structure.limit,
-            canBuild: techUnlocked && affordable && (structure.limit === null || currentCount < structure.limit),
+            atLimit: structure.limit !== null && totalPlanned >= structure.limit,
+            canBuild: techUnlocked && affordable && (structure.limit === null || totalPlanned < structure.limit),
         };
     }
 
@@ -248,6 +253,13 @@ export class ConstructionSystem {
     // Get total structures built
     getTotalStructures() {
         return this.stateManager.getTotalStructures();
+    }
+
+    getQueuedCount(structureId) {
+        return this.stateManager
+            .getQueue()
+            .filter(item => item.structureId === structureId)
+            .length;
     }
 
     // Bulk build multiple structures
