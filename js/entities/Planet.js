@@ -86,8 +86,18 @@ export class Planet extends CelestialBody {
         const geometry = new THREE.SphereGeometry(this.radius, segments, segments);
 
         let material;
+        const texture = this.loadTexture(this.data.texture);
 
-        if (this.bands) {
+        if (texture) {
+            material = new THREE.MeshStandardMaterial({
+                map: texture,
+                color: 0xffffff,
+                emissive: this.color,
+                emissiveIntensity: 0.25,
+                roughness: 0.8,
+                metalness: 0.1,
+            });
+        } else if (this.bands) {
             // Create banded material for gas giants
             material = this.createBandedMaterial();
         } else {
@@ -177,39 +187,16 @@ export class Planet extends CelestialBody {
         const outerRadius = this.ringsData.outerRadius;
 
         const geometry = new THREE.RingGeometry(innerRadius, outerRadius, 64);
-
-        // Create ring texture
-        const canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 64;
-        const ctx = canvas.getContext('2d');
-
-        // Create gradient for ring
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-        gradient.addColorStop(0, 'rgba(200, 180, 160, 0.0)');
-        gradient.addColorStop(0.1, 'rgba(200, 180, 160, 0.8)');
-        gradient.addColorStop(0.3, 'rgba(180, 160, 140, 0.5)');
-        gradient.addColorStop(0.5, 'rgba(200, 180, 160, 0.7)');
-        gradient.addColorStop(0.7, 'rgba(160, 140, 120, 0.4)');
-        gradient.addColorStop(0.9, 'rgba(200, 180, 160, 0.6)');
-        gradient.addColorStop(1, 'rgba(200, 180, 160, 0.0)');
-
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Add some ring gaps
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-        ctx.fillRect(256, 0, 20, canvas.height);
-        ctx.fillRect(350, 0, 10, canvas.height);
-
-        const texture = new THREE.CanvasTexture(canvas);
+        const texture = this.loadTexture(this.ringsData.texture);
+        const proceduralTexture = texture ?? this.createProceduralRingTexture();
 
         const material = new THREE.MeshStandardMaterial({
-            map: texture,
+            map: proceduralTexture,
             color: this.ringsData.color,
             transparent: true,
             opacity: this.ringsData.opacity,
             side: THREE.DoubleSide,
+            alphaTest: 0.1,
         });
 
         this.rings = new THREE.Mesh(geometry, material);
@@ -323,6 +310,9 @@ export class Planet extends CelestialBody {
     }
 
     dispose() {
+        if (this.mesh && this.mesh.material && this.mesh.material.map) {
+            this.mesh.material.map.dispose();
+        }
         super.dispose();
 
         // Dispose rings
@@ -343,6 +333,49 @@ export class Planet extends CelestialBody {
             }
         }
         this.moons.clear();
+    }
+
+    loadTexture(path) {
+        if (!path) {
+            return null;
+        }
+
+        const texture = new THREE.TextureLoader().load(path);
+        texture.wrapS = THREE.ClampToEdgeWrapping;
+        texture.wrapT = THREE.ClampToEdgeWrapping;
+        if ('colorSpace' in texture) {
+            texture.colorSpace = THREE.SRGBColorSpace;
+        }
+        return texture;
+    }
+
+    createProceduralRingTexture() {
+        // Create ring texture
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+
+        // Create gradient for ring
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, 'rgba(200, 180, 160, 0.0)');
+        gradient.addColorStop(0.1, 'rgba(200, 180, 160, 0.8)');
+        gradient.addColorStop(0.3, 'rgba(180, 160, 140, 0.5)');
+        gradient.addColorStop(0.5, 'rgba(200, 180, 160, 0.7)');
+        gradient.addColorStop(0.7, 'rgba(160, 140, 120, 0.4)');
+        gradient.addColorStop(0.9, 'rgba(200, 180, 160, 0.6)');
+        gradient.addColorStop(1, 'rgba(200, 180, 160, 0.0)');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Add some ring gaps
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(256, 0, 20, canvas.height);
+        ctx.fillRect(350, 0, 10, canvas.height);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        return texture;
     }
 }
 

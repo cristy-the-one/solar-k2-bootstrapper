@@ -10,7 +10,7 @@ export const PLANETS = [
         orbitSpeed: 0.04,
         rotationSpeed: 0.01,
         color: 0xb5b5b5,
-        texture: null, // Can add texture paths later
+        texture: 'mercury.jpg',
         tilt: 0.03,
         features: ['high_solar_flux', 'metal_rich'],
         unlockEra: 1,
@@ -28,7 +28,7 @@ export const PLANETS = [
         orbitSpeed: 0.03,
         rotationSpeed: -0.005, // Retrograde
         color: 0xe6c87a,
-        texture: null,
+        texture: 'venus.jpg',
         tilt: 177.4 * Math.PI / 180, // Nearly upside down
         features: ['thick_atmosphere', 'cloud_cities'],
         unlockEra: 2,
@@ -46,7 +46,7 @@ export const PLANETS = [
         orbitSpeed: 0.025,
         rotationSpeed: 0.02,
         color: 0x4488ff,
-        texture: null,
+        texture: 'earth.jpeg',
         tilt: 23.4 * Math.PI / 180,
         features: ['home_world', 'high_population', 'research_hub'],
         unlockEra: 1,
@@ -75,7 +75,7 @@ export const PLANETS = [
         orbitSpeed: 0.02,
         rotationSpeed: 0.019,
         color: 0xcc6644,
-        texture: null,
+        texture: 'mars.jpg',
         tilt: 25.2 * Math.PI / 180,
         features: ['colonizable', 'iron_rich', 'water_ice'],
         unlockEra: 1,
@@ -111,7 +111,7 @@ export const PLANETS = [
         orbitSpeed: 0.008,
         rotationSpeed: 0.04,
         color: 0xd4a574,
-        texture: null,
+        texture: 'jupiter.jpg',
         tilt: 3.1 * Math.PI / 180,
         features: ['gas_giant', 'helium3_rich', 'radiation_belt'],
         unlockEra: 2,
@@ -173,7 +173,7 @@ export const PLANETS = [
         orbitSpeed: 0.005,
         rotationSpeed: 0.038,
         color: 0xead6b8,
-        texture: null,
+        texture: 'saturn.jpg',
         tilt: 26.7 * Math.PI / 180,
         features: ['ringed', 'gas_giant', 'moon_system'],
         unlockEra: 3,
@@ -186,6 +186,7 @@ export const PLANETS = [
             outerRadius: 16,
             color: 0xd4c4a8,
             opacity: 0.7,
+            texture: 'SaturnRingsTexture.png',
         },
         moons: [
             {
@@ -217,7 +218,7 @@ export const PLANETS = [
         orbitSpeed: 0.003,
         rotationSpeed: -0.03, // Retrograde
         color: 0x88ccdd,
-        texture: null,
+        texture: 'uranus.jpg',
         tilt: 97.8 * Math.PI / 180, // Sideways
         features: ['ice_giant', 'exotic_materials'],
         unlockEra: 3,
@@ -240,7 +241,7 @@ export const PLANETS = [
         orbitSpeed: 0.002,
         rotationSpeed: 0.028,
         color: 0x4466ff,
-        texture: null,
+        texture: 'neptune.jpg',
         tilt: 28.3 * Math.PI / 180,
         features: ['ice_giant', 'rare_isotopes', 'extreme_distance'],
         unlockEra: 4,
@@ -258,6 +259,24 @@ export const PLANETS = [
                 features: ['retrograde', 'nitrogen_geysers'],
             },
         ],
+    },
+    {
+        id: 'pluto',
+        name: 'Pluto',
+        description: 'A distant dwarf planet with icy plains and a tenuous atmosphere.',
+        radius: 1.0,
+        orbitRadius: 460,
+        orbitSpeed: 0.0015,
+        rotationSpeed: 0.015,
+        color: 0xc9b7a4,
+        texture: 'pluto.jpg',
+        tilt: 119.6 * Math.PI / 180,
+        features: ['dwarf_planet', 'icy_surface', 'kuiper_belt_outpost'],
+        unlockEra: 4,
+        bonuses: {
+            volatiles: 1.6,
+            researchSpeed: 1.2,
+        },
     },
 ];
 
