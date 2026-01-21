@@ -2,6 +2,7 @@
 
 import { CONFIG } from '../config.js';
 import { STRUCTURES } from '../data/structures.js';
+import { TECH_TREE } from '../data/techTree.js';
 import { getStateManager } from '../core/StateManager.js';
 
 export class ResourceSystem {
@@ -14,6 +15,20 @@ export class ResourceSystem {
             materials: 1.0,
             research: 1.0,
             buildSpeed: 1.0,
+        };
+
+        this.logistics = {
+            launchCapacity: 0,
+            cargoCapacity: 0,
+            population: 0,
+            autoConstruction: 0,
+            energyEfficiency: 0,
+            dysonBonus: 1,
+            exoticMaterials: 0,
+            antimatter: 0,
+            energyStorage: 0,
+            solarMatter: 0,
+            computation: 0,
         };
     }
 
@@ -66,6 +81,19 @@ export class ResourceSystem {
         let research = CONFIG.BASE_PRODUCTION.research;
         let buildSpeedBonus = 0;
         let solarCapture = 0;
+        let energyFromDyson = 0;
+
+        let launchCapacity = 0;
+        let cargoCapacity = 0;
+        let population = 0;
+        let autoConstruction = 0;
+        let energyEfficiency = 0;
+        let dysonBonusMultiplier = 1;
+        let exoticMaterials = 0;
+        let antimatter = 0;
+        let energyStorage = 0;
+        let solarMatter = 0;
+        let computation = 0;
 
         // Add production from each structure type
         for (const [structureId, count] of Object.entries(structures)) {
@@ -78,7 +106,11 @@ export class ResourceSystem {
 
             // Add energy production
             if (prod.energy) {
-                energy += prod.energy * count;
+                if (prod.solarCapture) {
+                    energyFromDyson += prod.energy * count;
+                } else {
+                    energy += prod.energy * count;
+                }
             }
 
             // Add materials production
@@ -100,13 +132,78 @@ export class ResourceSystem {
             if (prod.solarCapture) {
                 solarCapture += prod.solarCapture * count;
             }
+
+            // Logistics/auxiliary production
+            if (prod.launchCapacity) {
+                launchCapacity += prod.launchCapacity * count;
+            }
+
+            if (prod.cargoCapacity) {
+                cargoCapacity += prod.cargoCapacity * count;
+            }
+
+            if (prod.population) {
+                population += prod.population * count;
+            }
+
+            if (prod.autoConstruction) {
+                autoConstruction += prod.autoConstruction * count;
+            }
+
+            if (prod.energyEfficiency) {
+                energyEfficiency += prod.energyEfficiency * count;
+            }
+
+            if (prod.dysonBonus) {
+                dysonBonusMultiplier += (prod.dysonBonus - 1) * count;
+            }
+
+            if (prod.exoticMaterials) {
+                exoticMaterials += prod.exoticMaterials * count;
+            }
+
+            if (prod.antimatter) {
+                antimatter += prod.antimatter * count;
+            }
+
+            if (prod.energyStorage) {
+                energyStorage += prod.energyStorage * count;
+            }
+
+            if (prod.solarMatter) {
+                solarMatter += prod.solarMatter * count;
+            }
+
+            if (prod.computation) {
+                computation += prod.computation * count;
+            }
         }
 
+        const techModifiers = this.getTechModifiers(state.completedResearch || []);
+        const cargoMultiplier = 1 + cargoCapacity / 1000;
+        const populationMultiplier = 1 + population / 10000;
+        const energyEfficiencyMultiplier = 1 + energyEfficiency;
+        const exoticMaterialMultiplier = 1 + exoticMaterials * 0.02;
+        const antimatterMultiplier = 1 + antimatter * 0.1;
+        const storageMultiplier = 1 + energyStorage / 100000;
+        const solarMatterMultiplier = 1 + solarMatter * 0.005;
+        const computationMultiplier = 1 + computation / 1000000 * 0.25;
+
         // Apply modifiers
-        energy *= this.modifiers.energy;
-        materials *= this.modifiers.materials;
-        research *= this.modifiers.research;
-        this.modifiers.buildSpeed = 1 + buildSpeedBonus;
+        const energyModifier = this.modifiers.energy * techModifiers.energy * energyEfficiencyMultiplier * antimatterMultiplier * storageMultiplier;
+        const materialsModifier = this.modifiers.materials * techModifiers.materials * cargoMultiplier * exoticMaterialMultiplier * solarMatterMultiplier;
+        const researchModifier = this.modifiers.research * techModifiers.research * populationMultiplier * computationMultiplier;
+
+        energy *= energyModifier;
+        materials *= materialsModifier;
+        research *= researchModifier;
+
+        energyFromDyson *= energyModifier * dysonBonusMultiplier * techModifiers.dysonEfficiency;
+        solarCapture *= dysonBonusMultiplier * techModifiers.dysonEfficiency;
+
+        energy += energyFromDyson;
+
+        this.modifiers.buildSpeed = (1 + buildSpeedBonus + launchCapacity * 0.02) * techModifiers.buildSpeed;
 
         // Update state
         this.stateManager.state.production = {
@@ -118,12 +215,27 @@ export class ResourceSystem {
         // Update solar capture
         this.stateManager.setSolarCapture(solarCapture);
 
+        this.logistics = {
+            launchCapacity,
+            cargoCapacity,
+            population,
+            autoConstruction,
+            energyEfficiency,
+            dysonBonus: dysonBonusMultiplier,
+            exoticMaterials,
+            antimatter,
+            energyStorage,
+            solarMatter,
+            computation,
+        };
+
         // Emit production update event
         this.stateManager.emit('production:update', {
             energy,
             materials,
             research,
             solarCapture,
+            logistics: this.logistics,
         });
     }
 
@@ -168,6 +280,14 @@ export class ResourceSystem {
         return this.modifiers.buildSpeed;
     }
 
+    getAutoConstructionRate() {
+        return this.logistics.autoConstruction;
+    }
+
+    getLogistics() {
+        return this.logistics;
+    }
+
     // Calculate how long until can afford something
     getTimeToAfford(costs) {
         const resources = this.getResources();
@@ -188,6 +308,61 @@ export class ResourceSystem {
         }
 
         return maxTime;
+    }
+
+    getTechModifiers(completedResearch) {
+        const modifiers = {
+            energy: 1,
+            materials: 1,
+            research: 1,
+            buildSpeed: 1,
+            dysonEfficiency: 1,
+        };
+
+        for (const techId of completedResearch) {
+            const effects = TECH_TREE[techId]?.effects;
+            if (!effects) continue;
+
+            if (effects.energyGeneration) {
+                modifiers.energy *= effects.energyGeneration;
+            }
+
+            if (effects.energyProduction) {
+                modifiers.energy *= effects.energyProduction;
+            }
+
+            if (effects.solarEfficiency) {
+                modifiers.energy *= effects.solarEfficiency;
+            }
+
+            if (effects.materialProduction) {
+                modifiers.materials *= effects.materialProduction;
+            }
+
+            if (effects.researchEfficiency) {
+                modifiers.research *= effects.researchEfficiency;
+            }
+
+            if (effects.productionMultiplier) {
+                modifiers.energy *= effects.productionMultiplier;
+                modifiers.materials *= effects.productionMultiplier;
+                modifiers.research *= effects.productionMultiplier;
+            }
+
+            if (effects.buildSpeed) {
+                modifiers.buildSpeed *= effects.buildSpeed;
+            }
+
+            if (effects.constructionEfficiency) {
+                modifiers.buildSpeed *= effects.constructionEfficiency;
+            }
+
+            if (effects.dysonEfficiency) {
+                modifiers.dysonEfficiency *= effects.dysonEfficiency;
+            }
+        }
+
+        return modifiers;
     }
 }
 
