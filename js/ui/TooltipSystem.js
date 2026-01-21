@@ -232,6 +232,42 @@ export class TooltipSystem {
             if (structure.production.solarCapture) {
                 content.stats['Solar Capture'] = `+${(structure.production.solarCapture * 100).toFixed(2)}%`;
             }
+            if (structure.production.buildSpeedBonus) {
+                content.stats['Build Speed'] = `+${(structure.production.buildSpeedBonus * 100).toFixed(0)}%`;
+            }
+            if (structure.production.launchCapacity) {
+                content.stats['Launch Capacity'] = `+${structure.production.launchCapacity}`;
+            }
+            if (structure.production.cargoCapacity) {
+                content.stats['Cargo Capacity'] = `+${structure.production.cargoCapacity}`;
+            }
+            if (structure.production.population) {
+                content.stats['Population'] = `+${structure.production.population}`;
+            }
+            if (structure.production.autoConstruction) {
+                content.stats['Auto-Construct'] = `+${structure.production.autoConstruction}/min`;
+            }
+            if (structure.production.energyEfficiency) {
+                content.stats['Energy Efficiency'] = `+${(structure.production.energyEfficiency * 100).toFixed(0)}%`;
+            }
+            if (structure.production.dysonBonus) {
+                content.stats['Dyson Bonus'] = `x${structure.production.dysonBonus}`;
+            }
+            if (structure.production.exoticMaterials) {
+                content.stats['Exotic Materials'] = `+${structure.production.exoticMaterials}/s`;
+            }
+            if (structure.production.antimatter) {
+                content.stats['Antimatter'] = `+${structure.production.antimatter}/s`;
+            }
+            if (structure.production.energyStorage) {
+                content.stats['Energy Storage'] = `+${structure.production.energyStorage}`;
+            }
+            if (structure.production.solarMatter) {
+                content.stats['Solar Matter'] = `+${structure.production.solarMatter}/s`;
+            }
+            if (structure.production.computation) {
+                content.stats['Computation'] = `+${structure.production.computation}`;
+            }
         }
 
         content.stats['Build Time'] = `${structure.buildTime}s`;

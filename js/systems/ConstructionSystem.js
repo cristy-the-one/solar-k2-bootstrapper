@@ -10,7 +10,9 @@ export class ConstructionSystem {
         this.resourceSystem = null;
 
         // Maximum queue size
-        this.maxQueueSize = 10;
+        this.baseQueueSize = 10;
+
+        this.autoBuildProgress = 0;
     }
 
     init() {
@@ -22,7 +24,10 @@ export class ConstructionSystem {
     // Update called every tick
     update(deltaTime) {
         const queue = this.stateManager.getQueue();
-        if (queue.length === 0) return;
+        if (queue.length === 0) {
+            this.applyAutoConstruction(deltaTime);
+            return;
+        }
 
         // Process the first item in queue
         const item = queue[0];
@@ -43,6 +48,8 @@ export class ConstructionSystem {
         if (item.progress >= item.buildTime) {
             this.completeConstruction(item);
         }
+
+        this.applyAutoConstruction(deltaTime);
     }
 
     // Start building a structure
@@ -73,7 +80,7 @@ export class ConstructionSystem {
 
         // Check queue size
         const queue = this.stateManager.getQueue();
-        if (queue.length >= this.maxQueueSize) {
+        if (queue.length >= this.getMaxQueueSize()) {
             return { success: false, reason: 'queue_full' };
         }
 
@@ -153,6 +160,27 @@ export class ConstructionSystem {
         console.log('[ConstructionSystem] Cancelled:', structure.name);
 
         return true;
+    }
+
+    getMaxQueueSize() {
+        const launchCapacity = this.resourceSystem?.getLogistics?.().launchCapacity || 0;
+        return this.baseQueueSize + Math.floor(launchCapacity);
+    }
+
+    applyAutoConstruction(deltaTime) {
+        const queue = this.stateManager.getQueue();
+        if (queue.length === 0) return;
+
+        const autoConstructionRate = this.resourceSystem?.getAutoConstructionRate?.() || 0;
+        if (autoConstructionRate <= 0) return;
+
+        this.autoBuildProgress += (autoConstructionRate / 60) * deltaTime;
+
+        while (this.autoBuildProgress >= 1 && this.stateManager.getQueue().length > 0) {
+            const item = this.stateManager.getQueue()[0];
+            this.completeConstruction(item);
+            this.autoBuildProgress -= 1;
+        }
     }
 
     // Check if tech is unlocked
